@@ -23,6 +23,5 @@ describe('Category Unit Tests', () => {
       description: 'Description movie'
     })
 
-    console.log(category.toJSON())
   })
 })

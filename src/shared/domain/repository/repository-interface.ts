@@ -1,11 +1,15 @@
-import { Entity } from "../domain/entity"
+import { Entity } from "../entity"
+import { ValueObject } from '../value-object'
 
-export interface IRepository extends Entity {
-  insert(entity): Promise<void>
-  update(entity): Promise<void>
-  delete(entity_id): Promise<void>
-  findById(entity_id): Promise<any>
-  findAll(): Promise<any>
+
+export interface IRepository<E extends Entity, EntityId extends ValueObject> {
+  insert(entity: E): Promise<void>
+  dulkInsert(entities: E[]): Promise<void>
+  update(entity: E[]): Promise<void>
+  delete(entity_id: EntityId): Promise<void>
+
+  findById(entity_id: EntityId): Promise<E>
+  findAll(): Promise<E[]>
 
   getEntity(): new (...args: any[]) => any
 }

@@ -1,6 +1,7 @@
 import { IRepository } from '../../domain/repository/repository-interface'
 import { Entity } from '../../domain/entity'
 import { ValueObject } from '../../domain/value-object'
+import { NotFoundError } from '../../domain/errors/not-found.error'
 
 export  abstract class InMemoryRepository<E extends Entity, EntityId extends ValueObject > implements IRepository<E, EntityId>{
   items: E[] = []
@@ -16,7 +17,7 @@ export  abstract class InMemoryRepository<E extends Entity, EntityId extends Val
       item.entity_id.equals(entity.entity_id)
     )
     if(indexFound === -1) {
-      throw new Error("Entity not found")
+      throw new NotFoundError(entity.entity_id, this.getEntity())
     }
     this.items[indexFound] = entity
   }
@@ -24,7 +25,7 @@ export  abstract class InMemoryRepository<E extends Entity, EntityId extends Val
   async delete(entity_id: EntityId): Promise<void> {
     const indexFound = this.items.find((item) => item.entity_id.equals(entity_id))
     if(indexFound === -1) {
-      throw new Error("Entity not found")
+      throw new NotFoundError(entity_id, this.getEntity())
     }
     this.items.splice(indexFound, 1)
   }
@@ -42,7 +43,7 @@ export  abstract class InMemoryRepository<E extends Entity, EntityId extends Val
     return typeof item === "undefined" ? null : item;
   }
 
-/*   async getEntity(): new (...args: any[]) => any {
+  async getEntity(): new (...args: any[]) => any {
     return this.items
-  } */
+  } 
 }

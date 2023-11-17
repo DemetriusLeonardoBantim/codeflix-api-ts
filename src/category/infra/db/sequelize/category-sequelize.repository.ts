@@ -14,7 +14,7 @@ export class CategorySequelizeRepository implements ICategoryRepository {
   }
 
   async insert(entity: Category): Promise<void> { 
-    this.categoryModel.create({
+    await this.categoryModel.create({
       category_id: entity.category_id.id,
       name: entity.name,
       description: entity.description,
@@ -22,8 +22,16 @@ export class CategorySequelizeRepository implements ICategoryRepository {
       created_at: entity.created_at
     })
   }
-  dulkInsert(entities: Category[]): Promise<void> {
-    throw new Error('Method not implemented.');
+  async dulkInsert(entities: Category[]): Promise<void> {
+    await this.categoryModel.bulkCreate(
+      entities.map((entity) => ({
+          category_id: entity.category_id.id,
+          name: entity.name,
+          description: entity.description,
+          is_active: entity.is_active,
+          created_at: entity.created_at
+      }))
+    )
   }
   update(entity: Category[]): Promise<void> {
     throw new Error('Method not implemented.');

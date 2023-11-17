@@ -4,12 +4,23 @@ import { SearchParams } from 'src/shared/domain/repository/search-params';
 import { SearchResult } from 'src/shared/domain/repository/search-result';
 import { Uuid } from 'src/shared/domain/value-objects/uuid.vo';
 import { ICategoryRepository } from '../../../domain/category.repository'
+import { CategoryModel } from './category.model';
 
 export class CategorySequelizeRepository implements ICategoryRepository {
   sortableFields: string[] = ['name', 'created_at'];
 
-  insert(entity: Category): Promise<void> {
-    throw new Error('Method not implemented.');
+  constructor(private categoryModel: typeof CategoryModel) {
+
+  }
+
+  async insert(entity: Category): Promise<void> { 
+    this.categoryModel.create({
+      category_id: entity.category_id.id,
+      name: entity.name,
+      description: entity.description,
+      is_active: entity.is_active,
+      created_at: entity.created_at
+    })
   }
   dulkInsert(entities: Category[]): Promise<void> {
     throw new Error('Method not implemented.');

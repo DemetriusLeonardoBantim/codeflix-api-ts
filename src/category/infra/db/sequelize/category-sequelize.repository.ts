@@ -26,21 +26,21 @@ export class CategorySequelizeRepository implements ICategoryRepository {
     })
   }
   async dulkInsert(entities: Category[]): Promise<void> {
-    const models = entities.map((entity) => CategoryModelMapper.toModel(entity))
-    await this.categoryModel.bulkCreate(models)
+    const modelProp = entities.map((entity) => CategoryModelMapper.toModel(entity))
+    await this.categoryModel.bulkCreate(modelProp)
   }
   async update(entity: Category): Promise<void> {
     const id = entity.category_id.id
-    const model = await this._get(entity.category_id.id)
-    if(!model) {
+    const modelProp = await this._get(entity.category_id.id)
+    if(!modelProp) {
       throw new NotFoundError(id, this.getEntity());
     }
     this.categoryModel.update({
 
-      name: model.name,
-      description: model.description,
-      is_active: model.is_active,
-      created_at: model.createdAt
+      name: modelProp.name,
+      description: modelProp.description,
+      is_active: modelProp.is_active,
+      created_at: modelProp.createdAt
     }, 
     {
       where: { category_id: entity.category_id.id },
@@ -50,17 +50,17 @@ export class CategorySequelizeRepository implements ICategoryRepository {
 
   async delete(category_id: Uuid): Promise<void> {
     const id = category_id.id
-    const model = await this._get(id)
-    if(!model) {
+    const modelProp = await this._get(id)
+    if(!modelProp) {
       throw new NotFoundError(id, this.getEntity())
     }
     await this.categoryModel.destroy({where: { category_id: id } })
   }
 
   async findById(entity_id: Uuid): Promise<Category | null> {
-    const model = await this._get(entity_id.id)
+    const modelProp = await this._get(entity_id.id)
 
-    return model ? CategoryModelMapper.toEntity(model) : null 
+    return modelProp ? CategoryModelMapper.toEntity(modelProp) : null 
 
   }
 
@@ -70,8 +70,8 @@ export class CategorySequelizeRepository implements ICategoryRepository {
   }
 
   async findAll(): Promise<Category[]> {
-    const models = await  this.categoryModel.findAll()
-    return models.map((model) => {
+    const modelProp = await  this.categoryModel.findAll()
+    return modelProp.map((model) => {
       return CategoryModelMapper.toEntity(model)
     })
   }
@@ -98,14 +98,7 @@ export class CategorySequelizeRepository implements ICategoryRepository {
     })
     return new CategorySearchResult({
       items: models.map((model) => {
-        return new Category({
-          category_id: new Uuid(model.category_id),
-          name: model.name,
-          description: model.description,
-          is_active: model.is_active,
-          created_at: model.createdAt,
-        })
-
+        return CategoryModelMapper.toEntity(model)
       }),
       current_page: props.page,
       per_page: props.per_page,
